@@ -87,6 +87,11 @@ web_modules/
 .next
 out
 
+# Generated build artifacts
+target/
+public/wasm/
+lib/generated-examples.ts
+
 # Nuxt.js build / generate output
 .nuxt
 dist

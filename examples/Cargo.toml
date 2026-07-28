@@ -1,0 +1,28 @@
+[package]
+name = "wgpui-examples"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+gpui-ce = { path = "D:/GitHub/WGPUI" }
+wasm-bindgen = "0.2"
+
+[[bin]]
+name = "hello_world"
+path = "hello_world.rs"
+
+[[bin]]
+name = "counter"
+path = "counter.rs"
+
+[[bin]]
+name = "todo"
+path = "todo.rs"
+
+[[bin]]
+name = "theming"
+path = "theming.rs"
+
+[[bin]]
+name = "flex_layout"
+path = "flex_layout.rs"
