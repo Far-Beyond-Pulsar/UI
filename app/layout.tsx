@@ -4,6 +4,8 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 
+const BASE = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
