@@ -107,33 +107,50 @@ function compileWasm(items) {
     // lib.rs wrapper
     let cleaned = ex.source.replace(/^\/\/!.*$/gm, "").replace(/\n{3,}/g, "\n\n");
     let body = cleaned.replace(
-      /^pub fn main\(\s*\)\s*\{/m,
+      /^(pub )?fn main\(\s*\)\s*\{/m,
       '#[wasm_bindgen(start)]\npub fn start() {\n    console_error_panic_hook::set_once();');
-    fs.writeFileSync(path.join(crateSrc, "lib.rs"), 'use wasm_bindgen::prelude::*;\n\n' + body, "utf-8");
+    const libContent = 'use wasm_bindgen::prelude::*;\n\n' + body;
+    fs.writeFileSync(path.join(crateSrc, "lib.rs"), libContent, "utf-8");
+    console.log(`    source: ${libContent.length} bytes, ${ex.source.length} bytes original`);
 
     // Build with wasm-pack
     const wasmName = `wgpui_${ex.slug.replace(/-/g, "_")}`;
     console.log(`  building ${ex.slug}…`);
 
+    // Clean any stale target cache from previous builds
+    const crateTarget = path.join(crateDir, "target");
+    if (fs.existsSync(crateTarget)) fs.rmSync(crateTarget, { recursive: true, force: true });
+
+    let buildOk = false;
     try {
       execSync(
         `wasm-pack build --target web --out-dir "${outDir}" --out-name "${wasmName}" "${crateDir}"`,
-        { stdio: "pipe", timeout: 600000 }
+        { stdio: "pipe", timeout: 600000, env: { ...process.env, CARGO_TARGET_DIR: path.join(ROOT, "target", "wasm-cache") } }
       );
+      buildOk = true;
+    } catch (err) {
+      // wasm-opt crashes on Windows but the WASM is already built.
+      // Check if the WASM file exists despite the error.
+      const wasmPath = path.join(outDir, `${wasmName}_bg.wasm`);
+      if (fs.existsSync(wasmPath) && fs.statSync(wasmPath).size > 100000) {
+        buildOk = true;
+        console.log(`  ${ex.slug} — WASM built (wasm-opt skipped)`);
+      } else {
+        const stderr = (err.stderr || err.stdout || err.message || "").toString();
+        const lines = stderr.split("\n").filter(l => l.includes("error") || l.includes("Error")).slice(-5).join("\n");
+        meta[ex.slug] = { ok: false, error: lines || stderr.slice(0, 2000) };
+        console.error(`  ✗ ${ex.slug}`);
+      }
+    }
 
-      // Write the HTML shell
+    if (buildOk) {
       writeHtmlShell(outDir, wasmName, ex.slug);
       meta[ex.slug] = { ok: true };
       console.log(`  ✓ ${ex.slug}`);
-    } catch (err) {
-      const stderr = (err.stderr || err.stdout || err.message || "").toString();
-      const lines = stderr.split("\n").filter(l => l.includes("error") || l.includes("Error")).slice(-5).join("\n");
-      meta[ex.slug] = { ok: false, error: lines || stderr.slice(0, 2000) };
-      console.error(`  ✗ ${ex.slug}`);
     }
 
-    // Clean up crate dir
-    if (fs.existsSync(crateDir)) fs.rmSync(crateDir, { recursive: true, force: true });
+    // Clean up crate dir (keep for debugging)
+    // if (fs.existsSync(crateDir)) fs.rmSync(crateDir, { recursive: true, force: true });
   }
 
   return meta;

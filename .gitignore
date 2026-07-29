@@ -90,6 +90,7 @@ out
 # Generated build artifacts
 target/
 public/wasm/
+target/
 lib/generated-examples.ts
 
 # Nuxt.js build / generate output
