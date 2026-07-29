@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Github } from "lucide-react";
+import { p } from "@/lib/utils";
 
 const SECTIONS = [
   {
@@ -74,7 +75,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <Image src="/logos/wgpui_crop.png" alt="" width={24} height={24} className="opacity-90" />
+              <Image src={p("/logos/wgpui_crop.png")} alt="" width={24} height={24} className="opacity-90" />
               <span className="text-sm font-semibold text-white">WGPUI</span>
             </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-[220px]">

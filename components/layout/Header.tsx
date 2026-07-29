@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Github, Menu, X } from "lucide-react";
+import { p } from "@/lib/utils";
 
 const BASE = (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_BASE_PATH) || "";
 
@@ -48,7 +49,7 @@ export function Header() {
           <span className="text-white/40 text-sm font-medium">/</span>
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/logos/wgpui_crop.png"
+              src={p("/logos/wgpui_crop.png")}
               alt=""
               width={22}
               height={22}

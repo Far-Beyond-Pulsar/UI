@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Github, ArrowRight, Layers, Monitor, Puzzle, Paintbrush, Code, PanelRightOpen } from "lucide-react";
 import { CodeBlock } from "@/components/ui/CodeBlock";
+import { p } from "@/lib/utils";
 
 const FEATURES = [
   {
@@ -62,7 +63,7 @@ export default function Page() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
           >
-            <Image src="/logos/wgpui.png" alt="" width={192} height={192} className="mx-auto mb-5 opacity-90" />
+            <Image src={p("/logos/wgpui.png")} alt="" width={192} height={192} className="mx-auto mb-5 opacity-90" />
           </motion.div>
 
           <motion.h1
