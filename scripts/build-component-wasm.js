@@ -14,10 +14,32 @@ const OUT = path.join(R, "public", "wasm-components");
 const TARGET = path.join(R, "target", "wc-comp");
 const CRATE_DIR = path.join(R, "target", "wc-crates");
 
-const uiPath = "C:/Users/redst/Documents/GitHub/WGPUI-Component/crates/ui";
-const hasUi = fs.existsSync(uiPath);
+function resolveRepo(name) {
+  const candidates = [
+    path.join(R, "..", name),                        // CI: ../WGPUI
+    `D:/GitHub/${name}`,                              // local D:
+    `C:/Users/redst/Documents/GitHub/${name}`,         // local C: user
+    `C:/GitHub/${name}`,                               // local C: root
+  ];
+  for (const c of candidates) {
+    const p = path.join(c, name === "WGPUI" ? "Cargo.toml" : "crates/ui/Cargo.toml");
+    if (fs.existsSync(p)) return c;
+  }
+  return null;
+}
 
-const files = fs.readdirSync(SRC).filter((f) => f.endsWith(".rs"));
+const gpuiPath = resolveRepo("WGPUI");
+const uiPath = resolveRepo("WGPUI-Component");
+const hasGpui = !!gpuiPath;
+const hasUi = !!uiPath && fs.existsSync(path.join(uiPath, "crates/ui"));
+
+let files;
+try {
+  files = fs.readdirSync(SRC).filter((f) => f.endsWith(".rs"));
+} catch {
+  console.log(`  ${SRC} not found — skipping component WASM builds`);
+  process.exit(0);
+}
 
 for (const file of files) {
   const slug = file.replace(/_/g, "-").replace(".rs", "");
@@ -42,8 +64,11 @@ for (const file of files) {
 
   fs.writeFileSync(path.join(crateSrc, "lib.rs"), "use wasm_bindgen::prelude::*;\n\n" + src, "utf-8");
 
-  const deps = ['gpui-ce = { path = "D:/GitHub/WGPUI" }', 'wasm-bindgen = "0.2"', 'console_error_panic_hook = "0.1"'];
-  if (hasUi) deps.push(`ui = { path = "${uiPath}" }`);
+  const deps = [];
+  if (hasGpui) deps.push(`gpui-ce = { path = "${gpuiPath.replace(/\\/g, '/')}" }`);
+  else deps.push('gpui-ce = { git = "https://github.com/Far-Beyond-Pulsar/WGPUI" }');
+  deps.push('wasm-bindgen = "0.2"', 'console_error_panic_hook = "0.1"');
+  if (hasUi) deps.push(`ui = { path = "${uiPath.replace(/\\/g, '/')}/crates/ui" }`);
 
   fs.writeFileSync(
     path.join(crateDir, "Cargo.toml"),

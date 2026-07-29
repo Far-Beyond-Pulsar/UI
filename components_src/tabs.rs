@@ -1,180 +1,60 @@
-//! Tabs & Workspace Demo
-//! A complete workspace/dock demo with draggable panels.
+//! Tabs & Workspace
+//! A proper workspace with dock panels using ui::Workspace and ui::dock primitives.
+//! Panels are added after workspace creation via outer context to avoid entity conflicts.
 //! Tags: workspace, dock, panels, tabs
 
 use gpui::*;
 use ui::dock::{DockPlacement, Panel, PanelEvent};
 use ui::workspace::Workspace;
 
-struct ExplorerPanel {
-    focus: FocusHandle,
+struct Explorer(FocusHandle);
+impl Explorer {
+    fn new(cx: &mut Context<Self>) -> Self { Self(cx.focus_handle()) }
 }
-
-impl ExplorerPanel {
-    fn new(cx: &mut Context<Self>) -> Self {
-        Self {
-            focus: cx.focus_handle(),
-        }
-    }
+impl Panel for Explorer {
+    fn panel_name(&self) -> &'static str { "Explorer" }
+    fn title(&self, _: &Window, _: &App) -> AnyElement { SharedString::from("Explorer").into_any_element() }
+    fn closable(&self, _: &App) -> bool { false }
 }
-
-impl Panel for ExplorerPanel {
-    fn panel_name(&self) -> &'static str {
-        "Explorer"
-    }
-
-    fn title(&self, _window: &Window, _cx: &App) -> AnyElement {
-        SharedString::from("Explorer").into_any_element()
-    }
-
-    fn closable(&self, _cx: &App) -> bool {
-        false
+impl Focusable for Explorer { fn focus_handle(&self, _: &App) -> FocusHandle { self.0.clone() } }
+impl EventEmitter<PanelEvent> for Explorer {}
+impl Render for Explorer {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        cx.notify(); div().flex_1().p_4().bg(rgb(0x1e1e1e)).child("Explorer")
     }
 }
 
-impl Focusable for ExplorerPanel {
-    fn focus_handle(&self, _cx: &App) -> FocusHandle {
-        self.focus.clone()
+struct Editor(FocusHandle);
+impl Editor {
+    fn new(cx: &mut Context<Self>) -> Self { Self(cx.focus_handle()) }
+}
+impl Panel for Editor {
+    fn panel_name(&self) -> &'static str { "Editor" }
+    fn title(&self, _: &Window, _: &App) -> AnyElement { SharedString::from("Editor").into_any_element() }
+    fn closable(&self, _: &App) -> bool { false }
+}
+impl Focusable for Editor { fn focus_handle(&self, _: &App) -> FocusHandle { self.0.clone() } }
+impl EventEmitter<PanelEvent> for Editor {}
+impl Render for Editor {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        cx.notify(); div().flex_1().p_4().bg(rgb(0x252525)).child("Editor")
     }
 }
 
-impl EventEmitter<PanelEvent> for ExplorerPanel {}
-
-impl Render for ExplorerPanel {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        cx.notify();
-        div()
-            .flex_1()
-            .p_4()
-            .bg(rgb(0x1e1e1e))
-            .child("Explorer Panel - Browse your files")
-    }
+struct Log(FocusHandle);
+impl Log {
+    fn new(cx: &mut Context<Self>) -> Self { Self(cx.focus_handle()) }
 }
-
-struct OutlinePanel {
-    focus: FocusHandle,
+impl Panel for Log {
+    fn panel_name(&self) -> &'static str { "Log" }
+    fn title(&self, _: &Window, _: &App) -> AnyElement { SharedString::from("Log").into_any_element() }
+    fn closable(&self, _: &App) -> bool { false }
 }
-
-impl OutlinePanel {
-    fn new(cx: &mut Context<Self>) -> Self {
-        Self {
-            focus: cx.focus_handle(),
-        }
-    }
-}
-
-impl Panel for OutlinePanel {
-    fn panel_name(&self) -> &'static str {
-        "Outline"
-    }
-
-    fn title(&self, _window: &Window, _cx: &App) -> AnyElement {
-        SharedString::from("Outline").into_any_element()
-    }
-
-    fn closable(&self, _cx: &App) -> bool {
-        false
-    }
-}
-
-impl Focusable for OutlinePanel {
-    fn focus_handle(&self, _cx: &App) -> FocusHandle {
-        self.focus.clone()
-    }
-}
-
-impl EventEmitter<PanelEvent> for OutlinePanel {}
-
-impl Render for OutlinePanel {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        cx.notify();
-        div()
-            .flex_1()
-            .p_4()
-            .bg(rgb(0x1e1e1e))
-            .child("Outline Panel - Document structure")
-    }
-}
-
-struct EditorPanel {
-    focus: FocusHandle,
-}
-
-impl EditorPanel {
-    fn new(cx: &mut Context<Self>) -> Self {
-        Self {
-            focus: cx.focus_handle(),
-        }
-    }
-}
-
-impl Panel for EditorPanel {
-    fn panel_name(&self) -> &'static str {
-        "Editor"
-    }
-
-    fn title(&self, _window: &Window, _cx: &App) -> AnyElement {
-        SharedString::from("Editor").into_any_element()
-    }
-}
-
-impl Focusable for EditorPanel {
-    fn focus_handle(&self, _cx: &App) -> FocusHandle {
-        self.focus.clone()
-    }
-}
-
-impl EventEmitter<PanelEvent> for EditorPanel {}
-
-impl Render for EditorPanel {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        cx.notify();
-        div()
-            .flex_1()
-            .p_4()
-            .bg(rgb(0x252525))
-            .child("Editor Panel - Main editing area (drag tabs to rearrange)")
-    }
-}
-
-struct LogPanel {
-    focus: FocusHandle,
-}
-
-impl LogPanel {
-    fn new(cx: &mut Context<Self>) -> Self {
-        Self {
-            focus: cx.focus_handle(),
-        }
-    }
-}
-
-impl Panel for LogPanel {
-    fn panel_name(&self) -> &'static str {
-        "Log"
-    }
-
-    fn title(&self, _window: &Window, _cx: &App) -> AnyElement {
-        SharedString::from("Log").into_any_element()
-    }
-}
-
-impl Focusable for LogPanel {
-    fn focus_handle(&self, _cx: &App) -> FocusHandle {
-        self.focus.clone()
-    }
-}
-
-impl EventEmitter<PanelEvent> for LogPanel {}
-
-impl Render for LogPanel {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
-        cx.notify();
-        div()
-            .flex_1()
-            .p_4()
-            .bg(rgb(0x1b1b1b))
-            .child("Log Panel - Build output and diagnostics")
+impl Focusable for Log { fn focus_handle(&self, _: &App) -> FocusHandle { self.0.clone() } }
+impl EventEmitter<PanelEvent> for Log {}
+impl Render for Log {
+    fn render(&mut self, _: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        cx.notify(); div().flex_1().p_4().bg(rgb(0x1b1b1b)).child("Log")
     }
 }
 
@@ -184,31 +64,19 @@ struct WorkspaceDemo {
 
 impl WorkspaceDemo {
     fn new(window: &mut Window, cx: &mut Context<Self>) -> Self {
-        let workspace = cx.new(|cx| {
-            let mut workspace = Workspace::new("demo-workspace", window, cx);
+        let explorer = cx.new(|cx| Explorer::new(cx));
+        let editor = cx.new(|cx| Editor::new(cx));
+        let log = cx.new(|cx| Log::new(cx));
 
-            workspace.add_panel(
-                cx.new(|cx| ExplorerPanel::new(cx)),
-                DockPlacement::Left,
-                window,
-                cx,
-            );
+        let workspace = cx.new(|cx| Workspace::new("demo", window, cx));
+        let w = workspace.clone();
 
-            workspace.add_panel(
-                cx.new(|cx| OutlinePanel::new(cx)),
-                DockPlacement::Right,
-                window,
-                cx,
-            );
-
-            workspace.add_panel(
-                cx.new(|cx| LogPanel::new(cx)),
-                DockPlacement::Bottom,
-                window,
-                cx,
-            );
-
-            workspace
+        // Add panels via App context to avoid entity conflict with cx.new()
+        let app: &mut App = &mut **cx;
+        w.update(app, |ws, cx| {
+            ws.add_panel(explorer, DockPlacement::Left, window, cx);
+            ws.add_panel(editor, DockPlacement::Center, window, cx);
+            ws.add_panel(log, DockPlacement::Bottom, window, cx);
         });
 
         Self { workspace }
@@ -225,7 +93,6 @@ fn main() {
     Application::new().run(|cx: &mut App| {
         cx.open_window(WindowOptions::default(), |window, cx| {
             cx.new(|cx| WorkspaceDemo::new(window, cx))
-        })
-        .unwrap();
+        }).unwrap();
     });
 }

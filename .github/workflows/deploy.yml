@@ -21,11 +21,25 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          path: UI
+
+      - name: Checkout WGPUI
+        uses: actions/checkout@v4
+        with:
+          repository: Far-Beyond-Pulsar/WGPUI
+          path: WGPUI
+
+      - name: Checkout WGPUI-Component
+        uses: actions/checkout@v4
+        with:
+          repository: Far-Beyond-Pulsar/WGPUI-Component
+          path: WGPUI-Component
 
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: UI/package-lock.json
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -38,8 +52,8 @@ jobs:
           path: |
             ~/.cargo/registry
             ~/.cargo/git
-            target/wasm-cache
-          key: wasm-${{ runner.os }}-${{ hashFiles('scripts/build-examples.js') }}
+            UI/target/wasm-cache
+          key: wasm-${{ runner.os }}-${{ hashFiles('UI/scripts/build-examples.js', 'UI/scripts/build-component-wasm.js') }}
           restore-keys: wasm-${{ runner.os }}-
 
       - name: Install wasm-pack
@@ -47,16 +61,18 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+        working-directory: UI
 
       - name: Build site
         run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /UI
+        working-directory: UI
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: out
+          path: UI/out
 
   deploy:
     needs: build

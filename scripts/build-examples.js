@@ -88,8 +88,14 @@ function compileWasm(items) {
     fs.mkdirSync(crateSrc, { recursive: true });
 
     // Cargo.toml — use git URLs if local path unavailable (CI)
-    const gpuiDep = fs.existsSync("D:/GitHub/WGPUI")
-      ? 'gpui-ce = { path = "D:/GitHub/WGPUI" }'
+    const gpuiRepo = (() => {
+      for (const p of [path.join(ROOT, "..", "WGPUI"), "D:/GitHub/WGPUI", "C:/Users/redst/Documents/GitHub/WGPUI", "C:/GitHub/WGPUI"]) {
+        if (fs.existsSync(path.join(p, "Cargo.toml"))) return p;
+      }
+      return null;
+    })();
+    const gpuiDep = gpuiRepo
+      ? `gpui-ce = { path = "${gpuiRepo.replace(/\\/g, '/')}" }`
       : 'gpui-ce = { git = "https://github.com/Far-Beyond-Pulsar/WGPUI" }';
     fs.writeFileSync(path.join(crateDir, "Cargo.toml"), [
       '[package]',
