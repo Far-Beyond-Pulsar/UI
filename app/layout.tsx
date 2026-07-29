@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   description:
     "A cross-platform GPU-accelerated UI framework for Rust, built on wgpu and winit. Rich component library included.",
   icons: {
-    icon: "/logos/wgpui_crop.png",
-    shortcut: "/logos/wgpui_crop.png",
-    apple: "/logos/wgpui_crop.png",
+    icon: `${BASE}/logos/wgpui_crop.png`,
+    shortcut: `${BASE}/logos/wgpui_crop.png`,
+    apple: `${BASE}/logos/wgpui_crop.png`,
   },
   openGraph: {
     title: "WGPUI — GPU-Accelerated UI for Rust",
