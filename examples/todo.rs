@@ -19,7 +19,7 @@ impl gpui::Render for TodoApp {
             .size_full()
             .p_8()
             .gap_4()
-            .bg(rgb(0xf5f5f5))
+            .bg(rgb(0x0c0c0c)).text_color(rgb(0xffffff))
             .child(
                 div()
                     .text_size(px(24.0))

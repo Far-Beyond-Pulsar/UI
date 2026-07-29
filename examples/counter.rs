@@ -14,7 +14,7 @@ impl gpui::Render for Counter {
             .justify_center()
             .items_center()
             .gap_4()
-            .bg(rgb(0xf5f5f5))
+            .bg(rgb(0x0c0c0c)).text_color(rgb(0xffffff))
             .child(
                 div()
                     .flex()

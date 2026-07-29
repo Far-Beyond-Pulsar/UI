@@ -31,7 +31,7 @@ impl gpui::Render for ThemeDemo {
             .justify_center()
             .items_center()
             .gap_6()
-            .bg(rgb(0xf5f5f5))
+            .bg(rgb(0x0c0c0c)).text_color(rgb(0xffffff))
             .child(
                 div()
                     .text_size(px(32.0))
@@ -61,7 +61,7 @@ impl gpui::Render for ThemeDemo {
                             .rounded_full()
                             .bg(rgb(theme.accent))
                             .border_2()
-                            .border_color(rgb(if i == self.current { 0xffffff } else { 0xf5f5f5 }))
+                            .border_color(rgb(if i == self.current { 0x1a1a1a } else { 0x0c0c0c }))
                     }))
             )
     }
