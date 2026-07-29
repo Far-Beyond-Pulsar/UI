@@ -33,26 +33,30 @@ export function Header() {
     >
       <div className="max-w-7xl mx-auto px-5 h-14 grid grid-cols-[1fr_auto_1fr] items-center">
         {/* Left: Pulsar / WGPUI */}
-        <Link href="/" className="flex items-center gap-2 shrink-0 justify-self-start">
-          <Image
-            src="https://far-beyond-pulsar.github.io/logos/pulsar.png"
-            alt="Pulsar"
-            width={24}
-            height={24}
-            className="opacity-80"
-          />
+        <div className="flex items-center gap-2 shrink-0 justify-self-start">
+          <a href="https://far-beyond-pulsar.github.io" className="flex items-center gap-2" target="_blank" rel="noopener noreferrer">
+            <Image
+              src="https://far-beyond-pulsar.github.io/logos/pulsar.png"
+              alt="Pulsar"
+              width={24}
+              height={24}
+              className="opacity-80"
+            />
+          </a>
           <span className="text-white/40 text-sm font-medium">/</span>
-          <Image
-            src="/logos/wgpui_crop.png"
-            alt=""
-            width={22}
-            height={22}
-            className="opacity-90"
-          />
-          <span className="text-white font-semibold text-[15px] tracking-tight">
-            WGPUI
-          </span>
-        </Link>
+          <Link href="/UI/" className="flex items-center gap-2">
+            <Image
+              src="/logos/wgpui_crop.png"
+              alt=""
+              width={22}
+              height={22}
+              className="opacity-90"
+            />
+            <span className="text-white font-semibold text-[15px] tracking-tight">
+              WGPUI
+            </span>
+          </Link>
+        </div>
 
         {/* Center: Nav */}
         <nav className="hidden md:flex items-center gap-1 justify-self-center">
