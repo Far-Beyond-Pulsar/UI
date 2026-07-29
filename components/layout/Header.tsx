@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Github, Menu, X } from "lucide-react";
 
+const BASE = (typeof process !== "undefined" && process.env?.NEXT_PUBLIC_BASE_PATH) || "";
+
 const NAV_LINKS = [
   { label: "Overview", href: "/" },
   { label: "Docs", href: "/docs" },
@@ -34,7 +36,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-5 h-14 grid grid-cols-[1fr_auto_1fr] items-center">
         {/* Left: Pulsar / WGPUI */}
         <div className="flex items-center gap-2 shrink-0 justify-self-start">
-          <a href="https://far-beyond-pulsar.github.io" className="flex items-center gap-2" target="_blank" rel="noopener noreferrer">
+          <a href="https://pulsarnative.com" className="flex items-center gap-2" rel="noopener noreferrer">
             <Image
               src="https://far-beyond-pulsar.github.io/logos/pulsar.png"
               alt="Pulsar"
@@ -44,7 +46,7 @@ export function Header() {
             />
           </a>
           <span className="text-white/40 text-sm font-medium">/</span>
-          <Link href="/UI/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/logos/wgpui_crop.png"
               alt=""
