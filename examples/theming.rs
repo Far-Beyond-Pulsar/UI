@@ -1,6 +1,5 @@
-//! Demonstrates theme switching with multiple color palettes.
-
-use gpui::*;
+use gpui::{div, prelude::*, px, rgb, size, App, Application, Bounds, Context, Window, WindowBounds, WindowOptions};
+use wasm_bindgen::prelude::*;
 
 struct Theme {
     name: &'static str,
@@ -20,15 +19,9 @@ struct ThemeDemo {
     current: usize,
 }
 
-impl ThemeDemo {
-    fn cycle(&mut self, _: &ClickEvent, _window: &mut Window, cx: &mut Context<Self>) {
-        self.current = (self.current + 1) % THEMES.len();
+impl gpui::Render for ThemeDemo {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl gpui::IntoElement {
         cx.notify();
-    }
-}
-
-impl Render for ThemeDemo {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         let t = &THEMES[self.current];
 
         div()
@@ -38,21 +31,25 @@ impl Render for ThemeDemo {
             .justify_center()
             .items_center()
             .gap_6()
-            .bg(rgb(0x0c0c0c))
+            .bg(rgb(0xf5f5f5))
             .child(
                 div()
                     .text_size(px(32.0))
-                    .font_weight(FontWeight::BOLD)
+                    .font_weight(gpui::FontWeight::BOLD)
                     .child(format!("Theme: {}", t.name))
             )
             .child(
                 div()
+                    .id("switch-btn")
                     .px_6()
                     .py_3()
                     .rounded_xl()
                     .bg(rgb(t.accent))
                     .hover(|s| s.bg(rgb(t.accent_hover)))
-                    .on_click(cx.listener(Self::cycle))
+                    .on_click(cx.listener(|this, _event, _window, cx| {
+                        this.current = (this.current + 1) % THEMES.len();
+                        cx.notify();
+                    }))
                     .child("Switch Theme")
             )
             .child(
@@ -64,17 +61,21 @@ impl Render for ThemeDemo {
                             .rounded_full()
                             .bg(rgb(theme.accent))
                             .border_2()
-                            .border_color(rgb(if i == self.current { 0xffffff } else { 0x000000 }))
+                            .border_color(rgb(if i == self.current { 0xffffff } else { 0xf5f5f5 }))
                     }))
             )
     }
 }
 
-fn main() {
+#[wasm_bindgen(start)]
+pub fn start() {
+    console_error_panic_hook::set_once();
     Application::new().run(|cx: &mut App| {
-        cx.open_window(WindowOptions::default(), |_, cx| {
-            cx.new(|_| ThemeDemo { current: 0 })
-        })
-        .expect("Failed to open window");
+        let bounds = Bounds::centered(None, size(px(800.), px(600.)), cx);
+        cx.open_window(
+            WindowOptions { window_bounds: Some(WindowBounds::Windowed(bounds)), ..Default::default() },
+            |_, cx| cx.new(|_| ThemeDemo { current: 0 }),
+        ).unwrap();
+        cx.activate(true);
     });
 }
