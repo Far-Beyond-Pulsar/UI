@@ -1,17 +1,18 @@
-use gpui::{div, prelude::*, px, rgb, size, App, Application, Bounds, Context, SharedString, Window, WindowBounds, WindowOptions};
-use wasm_bindgen::prelude::*;
+use gpui::*;
+
+// A minimal todo-style counter with an Add Task button.
+//
+// In a full todo app, you would store a Vec<TodoItem> and
+// render each item via .children(vec.iter().map(...)).
+// See the counter example for click listener patterns.
 
 struct TodoApp {
     count: u32,
 }
 
-impl gpui::Render for TodoApp {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl gpui::IntoElement {
+impl Render for TodoApp {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         cx.notify();
-        let add = cx.listener(|this, _: &gpui::ClickEvent, _window, cx| {
-            this.count += 1;
-            cx.notify();
-        });
 
         div()
             .flex()
@@ -19,13 +20,16 @@ impl gpui::Render for TodoApp {
             .size_full()
             .p_8()
             .gap_4()
-            .bg(rgb(0x0c0c0c)).text_color(rgb(0xffffff))
+            .bg(rgb(0x0c0c0c))
+            .text_color(rgb(0xffffff))
+            // Header
             .child(
                 div()
                     .text_size(px(24.0))
-                    .font_weight(gpui::FontWeight::BOLD)
-                    .child("todos")
+                    .font_weight(FontWeight::BOLD)
+                    .child("todos"),
             )
+            // Add button with counter
             .child(
                 div()
                     .id("add-btn")
@@ -33,21 +37,20 @@ impl gpui::Render for TodoApp {
                     .py_2()
                     .rounded_lg()
                     .bg(rgb(0x0ea5e9))
-                    .on_click(add)
-                    .child(format!("Add Task ({})", self.count))
+                    .on_click(cx.listener(|this, _event, _window, cx| {
+                        this.count += 1;
+                        cx.notify();
+                    }))
+                    .child(format!("Add Task ({})", self.count)),
             )
     }
 }
 
-#[wasm_bindgen(start)]
-pub fn start() {
-    console_error_panic_hook::set_once();
+fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(800.), px(600.)), cx);
-        cx.open_window(
-            WindowOptions { window_bounds: Some(WindowBounds::Windowed(bounds)), ..Default::default() },
-            |_, cx| cx.new(|_| TodoApp { count: 0 }),
-        ).unwrap();
-        cx.activate(true);
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| TodoApp { count: 0 })
+        })
+        .unwrap();
     });
 }

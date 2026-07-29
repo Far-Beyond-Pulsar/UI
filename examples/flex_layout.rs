@@ -1,9 +1,15 @@
-use gpui::{div, prelude::*, px, rgb, size, App, Application, Bounds, Context, Window, WindowBounds, WindowOptions};
-use wasm_bindgen::prelude::*;
+use gpui::*;
 
-fn card(color: u32, label: &str) -> impl gpui::IntoElement {
+// Demonstrates flexbox layout:
+//   - Flex row vs column
+//   - Gap, padding, alignment
+//   - Scrollable overflow
+//   - Nested layouts
+//   - The scroll area uses overflow_y_scroll() and flex_1()
+//     to fill remaining space and scroll when content overflows.
+
+fn card(color: u32, label: &str) -> impl IntoElement {
     div()
-        .id(format!("card-{}", label))
         .px_5()
         .py_3()
         .rounded_lg()
@@ -12,17 +18,27 @@ fn card(color: u32, label: &str) -> impl gpui::IntoElement {
         .child(label.to_string())
 }
 
-fn section(title: &str, content: impl gpui::IntoElement) -> impl gpui::IntoElement {
-    div().flex().flex_col().gap_3()
-        .child(div().text_sm().font_weight(gpui::FontWeight::BOLD).text_color(rgb(0xaaaaaa)).child(title.to_string()))
+fn section(title: &str, content: impl IntoElement) -> impl IntoElement {
+    div()
+        .flex()
+        .flex_col()
+        .gap_3()
+        .child(
+            div()
+                .text_sm()
+                .font_weight(FontWeight::BOLD)
+                .text_color(rgb(0xaaaaaa))
+                .child(title.to_string()),
+        )
         .child(content)
 }
 
 struct FlexLayoutDemo;
 
-impl gpui::Render for FlexLayoutDemo {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl gpui::IntoElement {
+impl Render for FlexLayoutDemo {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         cx.notify();
+
         div()
             .id("root")
             .flex()
@@ -31,7 +47,9 @@ impl gpui::Render for FlexLayoutDemo {
             .bg(rgb(0x0c0c0c))
             .text_color(rgb(0xffffff))
             .child(
-                // Scrollable content area
+                // Scrollable content area.
+                // flex_1() fills remaining vertical space.
+                // overflow_y_scroll() enables vertical scrolling.
                 div()
                     .id("scroll-area")
                     .flex_1()
@@ -40,66 +58,64 @@ impl gpui::Render for FlexLayoutDemo {
                     .gap_8()
                     .flex()
                     .flex_col()
-                    .child(section("Flex Row",
-                        div().id("row-section").flex().flex_row().gap_3()
+                    // Row layout: elements sit side by side
+                    .child(section(
+                        "Flex Row",
+                        div()
+                            .id("row")
+                            .flex()
+                            .flex_row()
+                            .gap_3()
                             .child(card(0x0ea5e9, "One"))
                             .child(card(0x10b981, "Two"))
-                            .child(card(0xf59e0b, "Three"))
+                            .child(card(0xf59e0b, "Three")),
                     ))
-                    .child(section("Flex Column",
-                        div().id("col-section").flex().flex_col().gap_2()
+                    // Column layout: elements stack vertically
+                    .child(section(
+                        "Flex Column",
+                        div()
+                            .id("col")
+                            .flex()
+                            .flex_col()
+                            .gap_2()
                             .child(card(0x8b5cf6, "Top"))
                             .child(card(0xec4899, "Middle"))
-                            .child(card(0xef4444, "Bottom"))
+                            .child(card(0xef4444, "Bottom")),
                     ))
-                    .child(section("Space Between",
-                        div().id("between-section").flex().flex_row().justify_between()
-                            .child(card(0x0ea5e9, "Left"))
-                            .child(card(0x10b981, "Center"))
-                            .child(card(0xf59e0b, "Right"))
+                    // Centered content
+                    .child(section(
+                        "Centered",
+                        div()
+                            .id("center")
+                            .flex()
+                            .justify_center()
+                            .items_center()
+                            .h(px(96.0))
+                            .bg(rgb(0x1a1a1a))
+                            .rounded_lg()
+                            .child("Perfectly Centered"),
                     ))
-                    .child(section("Nested Layout",
-                        div().id("nested-section").flex().flex_row().gap_4()
-                            .child(div().id("sidebar").flex().flex_col().gap_2().flex_1()
-                                .child(card(0x8b5cf6, "Sidebar"))
-                                .child(card(0x7c3aed, "Nav"))
-                            )
-                            .child(div().id("main").flex().flex_col().gap_2().flex_1()
-                                .child(card(0x0ea5e9, "Main"))
-                                .child(div().id("cards").flex().flex_row().gap_2()
-                                    .child(card(0x10b981, "A"))
-                                    .child(card(0xf59e0b, "B"))
-                                )
-                            )
-                    ))
-                    .child(section("Centered",
-                        div().id("centered").flex().justify_center().items_center().h(px(96.0)).bg(rgb(0x1a1a1a)).rounded_lg()
-                            .child("Perfectly Centered")
-                    ))
-                    .child(section("Tall Content (scroll test)",
-                        div().id("tall").flex().flex_col().gap_2()
-                            .child(card(0x333333, "Item 1"))
-                            .child(card(0x444444, "Item 2"))
-                            .child(card(0x555555, "Item 3"))
-                            .child(card(0x666666, "Item 4"))
-                            .child(card(0x777777, "Item 5"))
-                            .child(card(0x888888, "Item 6"))
-                            .child(card(0x999999, "Item 7"))
-                            .child(card(0xaaaaaa, "Item 8"))
-                    ))
+                    // Tall content to demonstrate scrolling
+                    .child(section(
+                        "Tall Content",
+                        div()
+                            .id("tall")
+                            .flex()
+                            .flex_col()
+                            .gap_2()
+                            .children((1..=10).map(|i| {
+                                card(0x333333 + i * 0x111111, &format!("Item {i}"))
+                            })),
+                    )),
             )
     }
 }
 
-#[wasm_bindgen(start)]
-pub fn start() {
-    console_error_panic_hook::set_once();
+fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(800.), px(600.)), cx);
-        cx.open_window(
-            WindowOptions { window_bounds: Some(WindowBounds::Windowed(bounds)), ..Default::default() },
-            |_, cx| cx.new(|_| FlexLayoutDemo),
-        ).unwrap();
-        cx.activate(true);
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| FlexLayoutDemo)
+        })
+        .unwrap();
     });
 }

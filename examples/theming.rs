@@ -1,5 +1,9 @@
-use gpui::{div, prelude::*, px, rgb, size, App, Application, Bounds, Context, Window, WindowBounds, WindowOptions};
-use wasm_bindgen::prelude::*;
+use gpui::*;
+
+// Demonstrates runtime theme switching.
+//
+// Click the button to cycle through color palettes.
+// Each palette changes the accent color and hover state.
 
 struct Theme {
     name: &'static str,
@@ -9,18 +13,18 @@ struct Theme {
 
 const THEMES: &[Theme] = &[
     Theme { name: "Pulsar Blue", accent: 0x0ea5e9, accent_hover: 0x0284c7 },
-    Theme { name: "Emerald", accent: 0x10b981, accent_hover: 0x059669 },
-    Theme { name: "Ruby", accent: 0xef4444, accent_hover: 0xdc2626 },
-    Theme { name: "Amber", accent: 0xf59e0b, accent_hover: 0xd97706 },
-    Theme { name: "Violet", accent: 0x8b5cf6, accent_hover: 0x7c3aed },
+    Theme { name: "Emerald",    accent: 0x10b981, accent_hover: 0x059669 },
+    Theme { name: "Ruby",       accent: 0xef4444, accent_hover: 0xdc2626 },
+    Theme { name: "Amber",      accent: 0xf59e0b, accent_hover: 0xd97706 },
+    Theme { name: "Violet",     accent: 0x8b5cf6, accent_hover: 0x7c3aed },
 ];
 
 struct ThemeDemo {
     current: usize,
 }
 
-impl gpui::Render for ThemeDemo {
-    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl gpui::IntoElement {
+impl Render for ThemeDemo {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
         cx.notify();
         let t = &THEMES[self.current];
 
@@ -31,13 +35,16 @@ impl gpui::Render for ThemeDemo {
             .justify_center()
             .items_center()
             .gap_6()
-            .bg(rgb(0x0c0c0c)).text_color(rgb(0xffffff))
+            .bg(rgb(0x0c0c0c))
+            .text_color(rgb(0xffffff))
+            // Theme name header
             .child(
                 div()
                     .text_size(px(32.0))
-                    .font_weight(gpui::FontWeight::BOLD)
-                    .child(format!("Theme: {}", t.name))
+                    .font_weight(FontWeight::BOLD)
+                    .child(format!("Theme: {}", t.name)),
             )
+            // Switch button (uses current accent color)
             .child(
                 div()
                     .id("switch-btn")
@@ -50,10 +57,13 @@ impl gpui::Render for ThemeDemo {
                         this.current = (this.current + 1) % THEMES.len();
                         cx.notify();
                     }))
-                    .child("Switch Theme")
+                    .child("Switch Theme"),
             )
+            // Color dot indicators
             .child(
-                div().flex().gap_2().mt_4()
+                div()
+                    .flex()
+                    .gap_2()
                     .children(THEMES.iter().enumerate().map(|(i, theme)| {
                         div()
                             .w_4()
@@ -61,21 +71,21 @@ impl gpui::Render for ThemeDemo {
                             .rounded_full()
                             .bg(rgb(theme.accent))
                             .border_2()
-                            .border_color(rgb(if i == self.current { 0x1a1a1a } else { 0x0c0c0c }))
-                    }))
+                            .border_color(rgb(if i == self.current {
+                                0xffffff
+                            } else {
+                                0x000000
+                            }))
+                    })),
             )
     }
 }
 
-#[wasm_bindgen(start)]
-pub fn start() {
-    console_error_panic_hook::set_once();
+fn main() {
     Application::new().run(|cx: &mut App| {
-        let bounds = Bounds::centered(None, size(px(800.), px(600.)), cx);
-        cx.open_window(
-            WindowOptions { window_bounds: Some(WindowBounds::Windowed(bounds)), ..Default::default() },
-            |_, cx| cx.new(|_| ThemeDemo { current: 0 }),
-        ).unwrap();
-        cx.activate(true);
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| ThemeDemo { current: 0 })
+        })
+        .unwrap();
     });
 }

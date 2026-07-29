@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-gpui-ce = { path = "D:/GitHub/WGPUI" }
+gpui-ce = { git = "https://github.com/Far-Beyond-Pulsar/WGPUI" }
 wasm-bindgen = "0.2"
 
 [[bin]]
