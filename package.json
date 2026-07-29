@@ -4,11 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "predev": "node scripts/build-examples.js",
-    "prebuild": "node scripts/build-examples.js",
+    "predev": "node scripts/build-examples.js && node scripts/build-components.js && node scripts/build-component-wasm.js",
+    "prebuild": "node scripts/build-examples.js && node scripts/build-components.js && node scripts/build-component-wasm.js",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "node -e \"const fs=require('fs');['public/wasm','public/wasm-components','lib/generated-examples.ts','lib/generated-components.ts','target/wc-crates','target/wc-comp'].forEach(d=>fs.rmSync(d,{recursive:true,force:true}));console.log('cleaned')\""
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
