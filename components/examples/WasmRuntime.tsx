@@ -11,6 +11,7 @@ interface WasmRuntimeProps {
 
 export function WasmRuntime({ slug, title }: WasmRuntimeProps) {
   const baseUrl = `${BASE}/wasm/${slug}`;
+  const wasmName = `wgpui_${slug.replace(/-/g, "_")}`;
 
   return (
     <div className="rounded-xl border border-white/[0.07] overflow-hidden bg-[#09090b] h-full flex flex-col">
