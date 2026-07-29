@@ -124,25 +124,26 @@ export default function Page() {
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mb-3">
               Quick Start
             </h2>
-            <p className="text-white/40 text-sm">
-              Add WGPUI to your Cargo.toml and start building GPU-accelerated UIs in minutes.
-            </p>
+             <p className="text-white/40 text-sm">
+               Add gpui-ce to your Cargo.toml and start building GPU-accelerated UIs in minutes.
+             </p>
           </motion.div>
 
           <CodeBlock
             title="Cargo.toml"
             code={`[dependencies]
-wgpui = { git = "https://github.com/Far-Beyond-Pulsar/WGPUI" }`}
+gpui-ce = { git = "https://github.com/Far-Beyond-Pulsar/WGPUI" }`}
           />
 
           <CodeBlock
             title="src/main.rs — Hello World"
-            code={`use wgpui::*;
+            code={`use gpui::*;
 
 struct HelloApp;
 
 impl Render for HelloApp {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, _window: &mut Window, cx: &mut Context<Self>) -> impl IntoElement {
+        cx.notify();
         div()
             .flex()
             .size_full()
@@ -153,19 +154,18 @@ impl Render for HelloApp {
                 div()
                     .px_6()
                     .py_3()
-                    .rounded_lg()
+                    .rounded_xl()
                     .bg(rgb(0x0ea5e9))
-                    .text_color(rgb(0xffffff))
-                    .child("Hello from WGPUI!")
+                    .child("Hello, WGPUI!")
             )
     }
 }
 
 fn main() {
-    App::new().run(|cx: &mut AppContext| {
-        cx.open_window(WindowOptions::default(), |cx| {
-            cx.new_view(|_cx| HelloApp)
-        });
+    Application::new().run(|cx: &mut App| {
+        cx.open_window(WindowOptions::default(), |_, cx| {
+            cx.new(|_| HelloApp)
+        }).unwrap();
     });
 }`}
           />
