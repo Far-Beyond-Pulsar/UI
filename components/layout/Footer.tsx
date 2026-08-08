@@ -34,10 +34,13 @@ const SECTIONS = [
   },
 ];
 
-function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+function FooterCol({ title, links, index }: { title: string; links: { label: string; href: string }[]; index: number }) {
   return (
     <div>
-      <p className="text-xs font-semibold tracking-widest uppercase text-white/25 mb-4">{title}</p>
+      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/30 mb-4">
+        <span className="text-[#38bdf8]/60 mr-2">0{index + 2}</span>
+        {title}
+      </p>
       <ul className="space-y-2.5">
         {links.map(({ label, href }) => {
           const isExternal = href.startsWith("http");
@@ -70,13 +73,14 @@ export function Footer() {
   if (pathname?.startsWith("/examples")) return null;
 
   return (
-    <footer className="border-t border-white/[0.07] bg-black">
+    <footer className="border-t border-white/[0.07] bg-black overflow-hidden">
       <div className="max-w-7xl mx-auto px-5 pt-16 pb-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <Image src={p("/logos/wgpui_crop.png")} alt="" width={24} height={24} className="opacity-90" />
               <span className="text-sm font-semibold text-white">WGPUI</span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/30">Rust</span>
             </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-[220px]">
               A cross-platform GPU-accelerated UI framework for Rust, built on wgpu and winit.
@@ -95,25 +99,37 @@ export function Footer() {
             </div>
           </div>
 
-          {SECTIONS.map((s) => (
-            <FooterCol key={s.title} title={s.title} links={s.links} />
+          {SECTIONS.map((s, i) => (
+            <FooterCol key={s.title} title={s.title} links={s.links} index={i} />
           ))}
         </div>
 
         <div className="divider mb-8" />
 
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <p className="text-xs text-white/25">
-            &copy; {new Date().getFullYear()} WGPUI. Open source under MIT.
+          <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/25">
+            &copy; {new Date().getFullYear()} WGPUI — MIT license
           </p>
-          <a
-            href="https://github.com/Far-Beyond-Pulsar/WGPUI"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs text-white/25 hover:text-white/50 transition-colors"
-          >
-            GitHub
-          </a>
+          <div className="flex items-center gap-5">
+            <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-white/15 hidden sm:block">
+              rust · wgpu · gpu-driven
+            </span>
+            <a
+              href="https://github.com/Far-Beyond-Pulsar/WGPUI"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/25 hover:text-white/50 transition-colors"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
+
+        {/* Ghost wordmark */}
+        <div className="select-none pointer-events-none mt-10 -mb-6 text-center">
+          <p className="text-outline-faint text-[clamp(3rem,12vw,10rem)] font-bold tracking-[-0.04em] leading-[0.8] whitespace-nowrap" data-text="WGPUI">
+            WGPUI
+          </p>
         </div>
       </div>
     </footer>

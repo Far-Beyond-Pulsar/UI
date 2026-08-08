@@ -62,13 +62,14 @@ export function Header() {
         </div>
 
         {/* Center: Nav */}
-        <nav className="hidden md:flex items-center gap-1 justify-self-center">
-          {NAV_LINKS.map(({ label, href }) => (
+        <nav className="hidden md:flex items-center gap-0.5 justify-self-center">
+          {NAV_LINKS.map(({ label, href }, i) => (
             <Link
               key={label}
               href={href}
-              className="px-3.5 py-1.5 text-sm text-white/55 hover:text-white transition-colors rounded-md hover:bg-white/[0.05]"
+              className="px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-white/45 hover:text-white transition-colors rounded-md hover:bg-white/[0.05]"
             >
+              <span className="text-[#38bdf8]/60 mr-1.5">0{i + 1}</span>
               {label}
             </Link>
           ))}
@@ -80,9 +81,9 @@ export function Header() {
             href="https://github.com/Far-Beyond-Pulsar/WGPUI"
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 text-sm text-white/55 hover:text-white transition-colors"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-white/55 hover:text-white transition-colors"
           >
-            <Github className="w-4 h-4" />
+            <Github className="w-3.5 h-3.5" />
             <span>GitHub</span>
           </a>
 
