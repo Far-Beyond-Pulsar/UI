@@ -301,7 +301,7 @@ fn main() {
       {/* ─── CTA ─── */}
       <section className="py-28 px-5 relative overflow-hidden">
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center select-none pointer-events-none opacity-40">
-          <p className="text-[clamp(4rem,16vw,13rem)] font-bold tracking-[-0.04em] leading-none whitespace-nowrap">
+          <p className="text-[clamp(4rem,16vw,13rem)] font-bold tracking-[-0.04em] leading-[1.05] whitespace-nowrap">
             <OutlineText text="WGPUI" />
           </p>
         </div>
