@@ -300,11 +300,6 @@ fn main() {
 
       {/* ─── CTA ─── */}
       <section className="py-28 px-5 relative overflow-hidden">
-        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center select-none pointer-events-none opacity-40">
-          <p className="text-[clamp(4rem,16vw,13rem)] font-bold tracking-[-0.04em] leading-[1.05] whitespace-nowrap">
-            <OutlineText text="WGPUI" />
-          </p>
-        </div>
         <div className="relative max-w-2xl mx-auto text-center">
           <p className="flex items-center justify-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-white/40 mb-4">
             <span className="w-8 h-px bg-[#38bdf8]/70" />
