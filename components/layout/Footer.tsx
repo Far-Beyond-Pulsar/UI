@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Github } from "lucide-react";
+import OutlineText from "@/components/OutlineText";
 import { p } from "@/lib/utils";
 
 const SECTIONS = [
@@ -127,8 +128,8 @@ export function Footer() {
 
         {/* Ghost wordmark */}
         <div className="select-none pointer-events-none mt-10 -mb-6 text-center">
-          <p className="text-outline-faint text-[clamp(3rem,12vw,10rem)] font-bold tracking-[-0.04em] leading-[0.8] whitespace-nowrap" data-text="WGPUI">
-            WGPUI
+          <p className="text-[clamp(3rem,12vw,10rem)] font-bold tracking-[-0.04em] leading-[0.8] whitespace-nowrap">
+            <OutlineText text="WGPUI" color="rgba(255, 255, 255, 0.18)" strokeWidth={3} />
           </p>
         </div>
       </div>

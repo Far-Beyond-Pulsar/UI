@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Github, ArrowRight, Layers, Monitor, Puzzle, Paintbrush, Code, PanelRightOpen } from "lucide-react";
 import { CodeBlock } from "@/components/ui/CodeBlock";
+import OutlineText from "@/components/OutlineText";
 import { p } from "@/lib/utils";
 
 const FEATURES = [
@@ -74,7 +75,7 @@ export default function Page() {
             transition={{ delay: 0.3, duration: 0.55 }}
             className="text-5xl sm:text-6xl md:text-7xl font-bold tracking-[-0.03em] leading-none text-white mb-5"
           >
-            GPU UI for <span className="text-outline-accent" data-text="every platform.">every platform.</span>
+            GPU UI for <OutlineText text="every platform." color="rgba(56, 189, 248, 0.85)" />
           </motion.h1>
 
           <motion.p
@@ -300,8 +301,8 @@ fn main() {
       {/* ─── CTA ─── */}
       <section className="py-28 px-5 relative overflow-hidden">
         <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 text-center select-none pointer-events-none opacity-40">
-          <p className="text-outline text-[clamp(4rem,16vw,13rem)] font-bold tracking-[-0.04em] leading-none whitespace-nowrap" data-text="WGPUI">
-            WGPUI
+          <p className="text-[clamp(4rem,16vw,13rem)] font-bold tracking-[-0.04em] leading-none whitespace-nowrap">
+            <OutlineText text="WGPUI" />
           </p>
         </div>
         <div className="relative max-w-2xl mx-auto text-center">
